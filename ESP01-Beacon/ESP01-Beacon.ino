@@ -27,6 +27,8 @@
 // DO NOT USE THEM or your ESP will be bricked
 #define PINOUT 0  //38 kHz out
 
+#define NUM_CHARS 5
+
 double freq;    // Hz
 double offset;  // percent (0.0 to 1.0)
 double width;   // percent (0.0 to 1.0)
@@ -70,7 +72,7 @@ void setup() {
 
   // Configure UART1 with desired parameters
   // For example, 2400 baud rate, 8 data bits, no parity, 1 stop bit
-  Serial1.begin(2400, SERIAL_8N1);
+  Serial1.begin(2400, SERIAL_8N2);
 
   // calculate arguments
   freq = 38000;
@@ -110,9 +112,11 @@ void loop() {
     // Send the byte if the buffer is empty
     // Fill the UART1 TX FIFO with the provided data
     ui_Tx_Delay++;
-    if (ui_Tx_Delay > 2000)  //delay between sent bytes
+    if (ui_Tx_Delay > 5000)  //delay between sent bytes
     {
-      WRITE_PERI_REG(UART_FIFO(UART1), TX_DATA);  //Tx_data[TX_Buffer_index]);
+      for (int i = 0; i < NUM_CHARS; i++) {
+        WRITE_PERI_REG(UART_FIFO(UART1), TX_DATA);  //Tx_data[TX_Buffer_index]);
+      }
       ui_Tx_Delay = 0;
       if (ESP.getVcc() <= 255) {
         ESP.deepSleep(0);  //goes to sleep because battery is low. unplug and recharge
