@@ -14,7 +14,7 @@
 #include <esp8266_peri.h>
 #include <eagle_soc.h>
 #include <uart_register.h>
-#include <ESP8266WiFi.h>
+// #include <ESP8266WiFi.h>
 
 #define TX_DATA 0x55
 
@@ -26,8 +26,6 @@
 // WARNING: some pins are used internally for connecting the ESP to ROM chip;
 // DO NOT USE THEM or your ESP will be bricked
 #define PINOUT 0  //38 kHz out
-
-
 
 double freq;    // Hz
 double offset;  // percent (0.0 to 1.0)
@@ -56,9 +54,6 @@ unsigned int ui_Tx_Delay;
 ADC_MODE(ADC_VCC);  // set up adc to read vcc pin
 
 void setup() {
-
-
-
   // disable hardware watchdog
   CLEAR_PERI_REG_MASK(WDT_CTL, WDT_CTL_ENABLE);
   // disable software watchdog
@@ -70,13 +65,12 @@ void setup() {
   //UART_FIFO(1) = {0xff, 0xFF, 0xFF, 0x55, 0xFF, 0xFF};
   // Set up UART1 pins
   // GPIO2 is TX, GPIO3 is RX
-  pinMode(2, FUNCTION_2);  // TX
+  pinMode(2, FUNCTION_2);  // Configure for TX1
   //pinMode(3, FUNCTION_2); // RX
 
   // Configure UART1 with desired parameters
   // For example, 2400 baud rate, 8 data bits, no parity, 1 stop bit
   Serial1.begin(2400, SERIAL_8N1);
-
 
   // calculate arguments
   freq = 38000;
@@ -88,47 +82,41 @@ void setup() {
   falling_edge = (unsigned long)((offset + width) * cycle_time) % cycle_time;
 
   prev_micros = micros();
-
-  int Go_To_Sleep = 1;
-
-  // do pinout shifting
-  while (Go_To_Sleep) {
-    if (width + offset < 1) {
-      // raising edge should appear earlier
-      while (TIME_CMP(micros(), prev_micros + raising_edge, cycle_time))
-        ;
-      setHigh();
-      while (TIME_CMP(micros(), prev_micros + falling_edge, cycle_time))
-        ;
-      setLow();
-    } else {
-      // falling edge should appear earlier
-      while (TIME_CMP(micros(), prev_micros + falling_edge, cycle_time))
-        ;
-      setLow();
-      while (TIME_CMP(micros(), prev_micros + raising_edge, cycle_time))
-        ;
-      setHigh();
-    }
-    prev_micros += cycle_time;
-    // Check if the UART1 TX buffer is empty
-    if (!(READ_PERI_REG(UART_STATUS(UART1)) & (UART_TXFIFO_CNT << UART_TXFIFO_CNT_S))) {
-      // Send the byte if the buffer is empty
-      // Fill the UART1 TX FIFO with the provided data
-      ui_Tx_Delay++;
-      if (ui_Tx_Delay > 2000)  //delay between sent bytes
-      {
-        WRITE_PERI_REG(UART_FIFO(UART1), TX_DATA);  //Tx_data[TX_Buffer_index]);
-        ui_Tx_Delay = 0;
-        if (ESP.getVcc() <= 255) {
-          Go_To_Sleep = 0;
-        }
-      }
-    }
-  }
 }
 
 void loop() {
-
-  ESP.deepSleep(0);  //goes to sleep because battery is low. unplug and recharge
+// do pinout shifting
+  if (width + offset < 1) {
+    // raising edge should appear earlier
+    while (TIME_CMP(micros(), prev_micros + raising_edge, cycle_time))
+      ;
+    setHigh();
+    while (TIME_CMP(micros(), prev_micros + falling_edge, cycle_time))
+      ;
+    setLow();
+  } 
+  else {
+    // falling edge should appear earlier
+    while (TIME_CMP(micros(), prev_micros + falling_edge, cycle_time))
+      ;
+    setLow();
+    while (TIME_CMP(micros(), prev_micros + raising_edge, cycle_time))
+      ;
+    setHigh();
+  }
+  prev_micros += cycle_time;
+  // Check if the UART1 TX buffer is empty
+  if (!(READ_PERI_REG(UART_STATUS(UART1)) & (UART_TXFIFO_CNT << UART_TXFIFO_CNT_S))) {
+    // Send the byte if the buffer is empty
+    // Fill the UART1 TX FIFO with the provided data
+    ui_Tx_Delay++;
+    if (ui_Tx_Delay > 2000)  //delay between sent bytes
+    {
+      WRITE_PERI_REG(UART_FIFO(UART1), TX_DATA);  //Tx_data[TX_Buffer_index]);
+      ui_Tx_Delay = 0;
+      if (ESP.getVcc() <= 255) {
+        ESP.deepSleep(0);  //goes to sleep because battery is low. unplug and recharge
+      }
+    }
+  }
 }
