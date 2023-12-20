@@ -42,7 +42,7 @@ void setup() {
   CLEAR_PERI_REG_MASK(WDT_CTL, WDT_CTL_ENABLE);    // disable hardware watchdog
   ESP.wdtDisable();                                // disable software watchdog
   pinMode(cCarrierPin, OUTPUT);                    // Configure carrier pin as output
-  pinMode(cSerialPin, FUNCTION_2);                 // Configure GPIO 2 for TX1 (UART1)
+  pinMode(cSerialPin, FUNCTION_2);                 // Configure GPIO2 for TX1 (UART1)
 
   // Configure UART1 with desired parameters: 1200 baud rate, 8 data bits, no parity, 1 stop bit
   Serial1.begin(1200, SERIAL_8N1);
