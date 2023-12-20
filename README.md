@@ -2,7 +2,7 @@
 
 Implements an IR beacon to emits bursts of a single character. The hardware is assumed to be an ESP8266-based ESP-01S module. Components are connected as shown below:
 
-    <img src="docs/ESP01-Beacon.jpg" alt="ESP01-Beacon" width="60%"/>
+<img src="docs/ESP01-Beacon.jpg" alt="ESP01-Beacon" width="60%"/>
 
 The carrier is generated on GPIO0 and is modulated by TX1 (UART1) on GPIO2. The default configuration uses a 38 kHz carrier frequency and broadcasts a single character `U` (`0x55` or `0b01010101`) every 100 ms. 
 
