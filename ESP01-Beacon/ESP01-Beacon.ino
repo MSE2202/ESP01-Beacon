@@ -74,7 +74,7 @@ void loop() {
       }
       prevBurst += cBurstSpacing;                  // update for next burst                              
       
-      if (ESP.getVcc() <= 255) {                   // check whether battery voltage is low
+      if (ESP.getVcc() <= 2100) {                  // check whether battery voltage is below 3.0 V
         ESP.deepSleep(0);                          // if so, put device to sleep -> unplug and recharge
       }
     }
