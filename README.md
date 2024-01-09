@@ -6,7 +6,7 @@ Implements an IR beacon to emit bursts of a single character. The hardware is as
 
 The carrier is generated on GPIO0 and is modulated by TX1 (UART1) on GPIO2. The default configuration uses a 38 kHz carrier frequency and broadcasts a single character `U` (`0x55` or `0b01010101`) every 100 ms. 
 
-In addition, the program monitors the input voltage and will enter deep sleep when the voltage drops below ~2.8 VDC. The battery will have to be recharged and reattached to reenable the beacon.
+In addition, the program monitors the input voltage and will enter deep sleep when the voltage drops below ~3.0 VDC. The battery will have to be recharged and reattached to reenable the beacon.
 
 ## Credits
 
