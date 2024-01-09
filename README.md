@@ -1,6 +1,6 @@
 # ESP01-Beacon
 
-Implements an IR beacon to emits bursts of a single character. The hardware is assumed to be an ESP8266-based ESP-01S module. Components are connected as shown below:
+Implements an IR beacon to emit bursts of a single character. The hardware is assumed to be an ESP8266-based ESP-01S module. Components are connected as shown below:
 
 <img src="docs/ESP01-Beacon.jpg" alt="ESP01-Beacon" width="60%"/>
 
